@@ -23,11 +23,6 @@ async def send_request(url):
 async def get_page_data(page):
     url = f"https://roscarservis.ru/catalog/legkovye/?set_filter=Y&sort%5Bprice%5D=asc&PAGEN_1={page}"
     data = await send_request(url)
-    # print(data)
-    # session_new = aiohttp.ClientSession()
-    # async with session_new.get(url=url, headers=HEADERS) as response1:
-    # response = await session.get(url=url, headers=HEADERS)
-    # data = await response1.text()
     items = data['items']
     for item in items:
         item_id = item['id']
@@ -72,42 +67,22 @@ async def get_page_data(page):
                 'stores_info': stores_data,
 
             })
-    print(f"Обработано {page}")
+    print(f"Обработана страница № {page}")
 
 
 async def gather_data():
     url = "https://roscarservis.ru/catalog/legkovye/?set_filter=Y&sort%5Bprice%5D=asc&PAGEN_1=0"
-
-    # async with aiohttp.ClientSession() as session:
-    # response = await session.get(url=url, headers=HEADERS)
-    # # print(await req.text())
-    # json_data = await response.json(content_type='text/html')
-    # # print(json_data)
     json_data = await send_request(
         'https://roscarservis.ru/catalog/legkovye/?set_filter=Y&sort%5Bprice%5D=asc&PAGEN_1=0')
     page_count = json_data["pagesCount"]
-    print(page_count)
+    # print(page_count)
     tasks = []
 
-    for page in range(1, 10):
+    for page in range(1, page_count + 1):
         task = asyncio.create_task(get_page_data(page))
         tasks.append(task)
 
     await asyncio.gather(*tasks)
-
-    # req = await aiohttp.request('get', url=url, headers=HEADERS)
-    # # req = requests.get(url, headers=HEADERS)
-    # src = req
-    # json_data = req.json()
-    # main_list = []
-
-    # # with open("1.html", 'w', encoding='utf-8') as file:
-    # #     file.write(src)
-    # # with open('1.json', 'w', encoding='utf-8') as file:
-    # #     json.dump(json_data, file, indent=4, ensure_ascii=False)
-    # page_count = json_data["pagesCount"]
-
-    # print(page_count)
 
 
 def create_json():
@@ -118,10 +93,8 @@ def create_json():
 def main():
 
     asyncio.run(gather_data())
-    # create_json()
+    create_json()
     print(datetime.datetime.now() - start_datetime)
-
-    # print(page_count)
 
 
 if __name__ == '__main__':
