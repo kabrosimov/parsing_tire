@@ -14,6 +14,7 @@ def get_main_data():
     url = "https://roscarservis.ru/catalog/legkovye/?set_filter=Y&sort%5Bprice%5D=asc&PAGEN_1=0"
     req = requests.get(url, headers=HEADERS)
     src = req.text
+    # print(src)
     json_data = req.json()
     main_list = []
 
@@ -22,12 +23,12 @@ def get_main_data():
     # with open('1.json', 'w', encoding='utf-8') as file:
     #     json.dump(json_data, file, indent=4, ensure_ascii=False)
     page_count = json_data["pagesCount"]
+    page_count = 15
     # page_count = 1
     for page_num in range(int(page_count)):
-        url = f"https://roscarservis.ru/catalog/legkovye/?set_filter=Y&sort%5Bprice%5D=asc&PAGEN_1={
-            page_num+1}"
+        url = f"https://roscarservis.ru/catalog/legkovye/?set_filter=Y&sort%5Bprice%5D=asc&PAGEN_1={page_num+1}"
         req = requests.get(url=url, headers=HEADERS)
-        data = req.json()
+        data = req.json(content_type='text/html')
         items = data['items']
         for item in items:
             item_id = item['id']
